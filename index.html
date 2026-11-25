@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>グループワーク・アイスブレイク診断</title>
+    <!-- 外部CSSファイルの読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1. ホーム画面（ルーム作成 or 参加） -->
+    <div id="home-screen" class="screen active">
+        <h1>チーム診断アイスブレイク</h1>
+        <p>グループの現在地を診断して、最適なゲームを見つけよう！</p>
+        
+        <div style="background: #f1f5f9; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+            <h3>👑 ホスト（進行役）の方</h3>
+            <div class="form-group">
+                <label>ルーム名</label>
+                <input type="text" id="room-name" placeholder="例：Aチーム">
+            </div>
+            <div class="form-group">
+                <label>参加人数</label>
+                <input type="number" id="member-count" value="3" min="1" max="20">
+            </div>
+            <button onclick="createRoom()">ルームを作成する</button>
+        </div>
+
+        <div style="background: #f1f5f9; padding: 20px; border-radius: 12px;">
+            <h3>📱 参加者の方</h3>
+            <div class="form-group">
+                <label>ルームID（4桁）</label>
+                <input type="text" id="join-room-id" placeholder="例：A1B2" style="text-transform: uppercase;">
+            </div>
+            <button onclick="joinRoom()" style="background-color: #0d9488;">ルームに参加する</button>
+        </div>
+    </div>
+
+    <!-- 2. 待機画面 -->
+    <div id="wait-screen" class="screen">
+        <h2>メンバーの回答を待っています...</h2>
+        <div class="room-id-tag" id="display-room-id">----</div>
+        <p style="text-align: center;">このルームIDをメンバーに伝えてください。<br>全員が回答すると自動で結果が表示されます！</p>
+        <p id="counter-text" style="text-align: center; font-weight: bold; font-size: 18px; color: var(--primary-color);">0人 / 3人 が回答完了</p>
+    </div>
+
+    <!-- 3. 質問回答画面 -->
+    <div id="question-screen" class="screen">
+        <h2>アイスブレイク診断</h2>
+        <p>今のグループの状況に最も近いものを選んでください。</p>
+        <div id="questions-container"></div>
+        <button onclick="submitMyAnswers()">回答を送信する</button>
+    </div>
+
+    <!-- 4. 診断結果画面 -->
+    <div id="result-screen" class="screen">
+        <h2>診断結果</h2>
+        <div class="result-box">
+            <p>あなたのグループタイプは...</p>
+            <div id="result-type-name" class="result-title"></div>
+            <p id="result-features" style="color: var(--text-color);"></p>
+        </div>
+        
+        <h3>💡 アドバイス</h3>
+        <p id="result-advice"></p>
+
+        <h3>🎮 おすすめのアイスブレイクゲーム</h3>
+        <p id="result-game" style="font-weight: bold; color: var(--primary-color);"></p>
+
+        <button onclick="location.reload()">最初に戻る</button>
+    </div>
+
+</div>
+
+<!-- 外部JavaScriptファイルの読み込み（type="module"を指定） -->
+<script type="module" src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,131 @@
+:root {
+    --primary-color: #6366f1;
+    --primary-hover: #4f46e5;
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --text-color: #1e293b;
+    --gray-color: #64748b;
+    --border-color: #e2e8f0;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+h1, h2 {
+    color: var(--primary-color);
+    text-align: center;
+}
+
+p {
+    line-height: 1.6;
+    color: var(--gray-color);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: var(--primary-hover);
+}
+
+.question-card {
+    margin-bottom: 25px;
+    padding: 15px;
+    background: #f1f5f9;
+    border-radius: 8px;
+}
+
+.radio-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.radio-group label {
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.result-box {
+    text-align: center;
+    padding: 20px;
+    background: #eef2ff;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.result-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin: 10px 0;
+}
+
+.room-id-tag {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-align: center;
+    background: #eef2ff;
+    padding: 10px;
+    border-radius: 8px;
+    letter-spacing: 2px;
+    margin: 15px 0;
+}
