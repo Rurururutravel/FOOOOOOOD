@@ -1,0 +1,712 @@
+/* 全体の基本設定 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Hiragino Maru Gothic ProN", "Rounded Mplus 1c", "Yu Gothic", sans-serif;
+  background-color: #f3ece1;
+  background-image: radial-gradient(#ffd6ba 1.5px, transparent 1.5px), radial-gradient(#a8dadc 1.5px, #f7f3eb 1.5px);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* スマホ画面コンテナ */
+.app-container {
+  width: 100%;
+  max-width: 414px;
+  background-color: #FFF9F0;
+  min-height: 100vh;
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.phone-notch {
+  display: none;
+}
+
+/* PC画面（プレゼン投影時）は本物のスマホ端末のように枠をつける */
+@media (min-width: 481px) {
+  body {
+    padding: 20px 0;
+  }
+  .app-container {
+    min-height: 780px;
+    max-height: 850px;
+    border-radius: 44px;
+    border: 12px solid #2b2d42;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    padding-top: 34px;
+    overflow-y: auto;
+  }
+  .phone-notch {
+    display: block;
+    width: 130px;
+    height: 22px;
+    background-color: #2b2d42;
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
+}
+
+/* 画面切り替えアニメーション */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  justify-content: center;
+}
+
+.screen.active {
+  display: flex;
+  animation: fadeSlideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* テキスト類 */
+h1 {
+  font-size: 1.9rem;
+  color: #2b2d42;
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+}
+
+h2 {
+  font-size: 1.35rem;
+  color: #2b2d42;
+  margin: 10px 0;
+  line-height: 1.45;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #FF7B54;
+}
+
+.catchcopy-mini {
+  font-size: 0.92rem;
+  font-weight: bold;
+  color: #555;
+  margin: 8px 0 14px 0;
+  line-height: 1.5;
+}
+
+/* ホーム画面のコンパクトイラスト枠 */
+.illustration-box-mini {
+  margin: 8px auto;
+  background: #FFE5D4;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 -4px 8px rgba(255, 159, 104, 0.25);
+  overflow: hidden;
+  padding: 8px;
+}
+
+.custom-illust {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.fallback-emoji-mini {
+  display: none;
+  font-size: 2.1rem;
+}
+
+/* ==========================================
+   ホーム画面のルーム作成＆参加カード（温かみデザイン）
+   ========================================== */
+#screen-home {
+  justify-content: flex-start;
+}
+
+.room-card {
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 14px;
+  text-align: left;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.host-card {
+  border: 2px solid #FFD6BA;
+}
+
+.guest-card {
+  border: 2px solid #A8DADC;
+  margin-bottom: 4px;
+}
+
+.room-card h3 {
+  font-size: 1rem;
+  color: #2b2d42;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.room-card input[type="text"],
+.room-card input[type="number"],
+.custom-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #EFEFEF;
+  background-color: #FAFAFA;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.room-card input:focus,
+.custom-select:focus {
+  border-color: #FF9F68;
+  background-color: #FFFFFF;
+}
+
+/* ==========================================
+   待機画面（ルームID共有＆カウンター）
+   ========================================== */
+.room-id-box {
+  width: 100%;
+  background: #FFFFFF;
+  border: 2px dashed #FF9F68;
+  border-radius: 20px;
+  padding: 16px;
+  margin: 14px 0;
+}
+
+.room-id-label {
+  font-size: 0.82rem;
+  font-weight: bold;
+  color: #FF7B54;
+  margin-bottom: 6px;
+}
+
+.room-id-tag {
+  font-size: 2.3rem;
+  font-weight: bold;
+  color: #2b2d42;
+  background: #FFE5D4;
+  padding: 10px;
+  border-radius: 14px;
+  letter-spacing: 6px;
+}
+
+.wait-desc {
+  font-size: 0.88rem;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.counter-box {
+  background: #E0FBFC;
+  border: 2px solid #8ECAE6;
+  padding: 12px 20px;
+  border-radius: 30px;
+  width: 100%;
+}
+
+.counter-box p {
+  font-size: 1.05rem;
+  font-weight: bold;
+  color: #1D3557;
+}
+
+.submitted-msg {
+  background: #FFF3CD;
+  color: #664D03;
+  padding: 12px;
+  border-radius: 14px;
+  font-size: 0.88rem;
+  font-weight: bold;
+  line-height: 1.5;
+}
+
+/* バッジ・プログレスバー */
+.step-badge {
+  background-color: #A8DADC;
+  color: #1D3557;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.84rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.progress-bar-bg {
+  width: 100%;
+  height: 8px;
+  background-color: #FFE5D4;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 20%;
+  background: linear-gradient(90deg, #FF9F68, #FF7B54);
+  border-radius: 10px;
+  transition: width 0.35s ease;
+}
+
+.note, .sub-text {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 18px;
+}
+
+/* ボタンデザイン */
+button {
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.2s ease;
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #FF9F68 0%, #FF7B54 100%);
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 14px 24px;
+  border-radius: 30px;
+  width: 100%;
+  box-shadow: 0 5px 12px rgba(255, 123, 84, 0.35);
+}
+
+.btn-teal {
+  background: linear-gradient(135deg, #4ECDC4 0%, #219EBC 100%);
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 13px 24px;
+  border-radius: 30px;
+  width: 100%;
+  box-shadow: 0 5px 12px rgba(33, 158, 188, 0.3);
+}
+
+.choice-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-choice {
+  background-color: #FFFFFF;
+  border: 2px solid #FFD6BA;
+  color: #333;
+  font-size: 0.98rem;
+  font-weight: bold;
+  padding: 15px;
+  border-radius: 16px;
+  width: 100%;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.04);
+}
+
+.btn-choice:hover {
+  background-color: #FFE5D4;
+  border-color: #FF9F68;
+}
+
+/* ゲームカード */
+.card-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.game-card {
+  background: white;
+  border-radius: 16px;
+  padding: 15px;
+  text-align: left;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  border-left: 6px solid #8ECAE6;
+}
+
+.game-card h3 {
+  font-size: 1.08rem;
+  margin-bottom: 6px;
+  color: #1D3557;
+}
+
+.game-card p {
+  font-size: 0.84rem;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.btn-select-game {
+  background-color: #8ECAE6;
+  color: #1D3557;
+  font-weight: bold;
+  padding: 9px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.btn-secondary {
+  background-color: #FFFFFF;
+  color: #555;
+  border: 2px solid #DDD;
+  font-size: 0.92rem;
+  font-weight: bold;
+  padding: 11px 24px;
+  border-radius: 25px;
+  width: 100%;
+  margin-top: 14px;
+}
+
+/* プレイ画面（タイトル→画像→ルール→ツール→タイマー→終了ボタン） */
+#screen-play {
+  justify-content: flex-start;
+  padding-top: 4px;
+}
+
+.play-title {
+  margin-top: 4px;
+  margin-bottom: 10px;
+}
+
+.play-illust-area {
+  width: 100%;
+  margin: 0 0 14px 0;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.play-custom-illust {
+  max-width: 260px;
+  max-height: 135px;
+  width: auto;
+  height: auto;
+  border-radius: 14px;
+  object-fit: contain;
+}
+
+.play-fallback-text {
+  display: none;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #FF7B54;
+  background: #FFE5D4;
+  padding: 6px 16px;
+  border-radius: 20px;
+}
+
+.rule-box {
+  background: white;
+  padding: 16px;
+  border-radius: 16px;
+  width: 100%;
+  text-align: left;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.btn-voice-mini {
+  background-color: #FFD166;
+  color: #333;
+  font-weight: bold;
+  font-size: 0.85rem;
+  padding: 9px 16px;
+  border-radius: 20px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.tool-box {
+  background-color: #FFFFFF;
+  border: 2px solid #8ECAE6;
+  border-radius: 16px;
+  padding: 14px;
+  width: 100%;
+  margin-bottom: 10px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tool-title {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #1D3557;
+  margin-bottom: 6px;
+}
+
+@keyframes popBounce {
+  0% { transform: scale(0.85); }
+  60% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+.pop-anim {
+  animation: popBounce 0.3s ease-out;
+}
+
+.roulette-display {
+  background-color: #F0F8FF;
+  border-radius: 12px;
+  padding: 14px 12px;
+  font-size: 1.05rem;
+  font-weight: bold;
+  color: #1D3557;
+  margin: 8px 0;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.4;
+}
+
+.btn-tool {
+  background-color: #219EBC;
+  color: white;
+  font-weight: bold;
+  font-size: 0.95rem;
+  padding: 10px 20px;
+  border-radius: 20px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.btn-tool-sub {
+  background-color: #E0FBFC;
+  color: #1D3557;
+  border: 1px solid #8ECAE6;
+  font-weight: bold;
+  font-size: 0.82rem;
+  padding: 7px 12px;
+  border-radius: 15px;
+  margin: 4px;
+}
+
+.wolf-players {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.quiz-answer {
+  background-color: #FFF3CD;
+  color: #664D03;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  margin-top: 8px;
+  text-align: left;
+}
+
+/* 共通カスタムタイマー枠 */
+.timer-box {
+  background-color: #FFFFFF;
+  border: 2px solid #FFD6BA;
+  border-radius: 16px;
+  padding: 12px 14px;
+  width: 100%;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.timer-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.timer-label {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #555;
+}
+
+.timer-adjust {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-time-adj {
+  background-color: #FFE5D4;
+  color: #FF7B54;
+  font-size: 0.85rem;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+.timer-num {
+  font-size: 1.35rem;
+  font-weight: bold;
+  color: #2b2d42;
+  font-family: monospace;
+  min-width: 64px;
+  text-align: center;
+}
+
+.timer-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.timer-controls button {
+  flex: 1;
+  font-size: 0.85rem;
+  font-weight: bold;
+  padding: 8px 6px;
+  border-radius: 10px;
+}
+
+.btn-timer-start {
+  background-color: #8ECAE6;
+  color: #1D3557;
+}
+
+.btn-timer-stop {
+  background-color: #FFD166;
+  color: #333;
+}
+
+.btn-timer-reset {
+  background-color: #F0F0F0;
+  color: #555;
+}
+
+.play-footer {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-back-link {
+  background: none;
+  color: #777;
+  font-size: 0.85rem;
+  font-weight: bold;
+  padding: 6px;
+  text-decoration: underline;
+}
+
+/* 診断結果カード */
+.result-card {
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFF5EB 100%);
+  border: 3px solid #FFD166;
+  border-radius: 22px;
+  padding: 22px 18px;
+  width: 100%;
+  box-shadow: 0 8px 20px rgba(255, 159, 104, 0.2);
+  margin-bottom: 18px;
+}
+
+.result-ribbon {
+  display: inline-block;
+  background-color: #FFD166;
+  color: #5c4300;
+  font-size: 0.72rem;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  padding: 3px 12px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.mbti-code {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #FF7B54;
+}
+
+.result-detail {
+  background-color: #FFFFFF;
+  border-radius: 14px;
+  padding: 14px;
+  text-align: left;
+  margin-top: 14px;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.result-detail h4 {
+  color: #1D3557;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.result-detail h4:first-child {
+  margin-top: 0;
+}

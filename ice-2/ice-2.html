@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>おたすけアイス</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- PCプレゼン時にスマホらしく見せる上部スピーカー装飾 -->
+    <div class="phone-notch"></div>
+    
+    <!-- 画面1：ホーム画面（ルーム作成 or 参加） -->
+    <section id="screen-home" class="screen active">
+      <div class="logo-area">
+        <p class="subtitle">グループワーク支援アプリ</p>
+        <h1>おたすけアイス</h1>
+      </div>
+
+      <!-- コンパクトなイラスト枠（画像がなければ絵文字を表示） -->
+      <div class="illustration-box-mini">
+        <img src="images/home-illust.png" alt="おたすけアイスイラスト" class="custom-illust" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <span class="fallback-emoji-mini">🧊🤝🔥</span>
+      </div>
+
+      <p class="catchcopy-mini">グループの現在地を診断して、<br>最適なアイスブレイクを見つけよう！</p>
+
+      <!-- ホスト（進行役）用カード -->
+      <div class="room-card host-card">
+        <h3>👑 ホスト（進行役）の方</h3>
+        <div class="form-row">
+          <div class="form-group" style="flex: 2;">
+            <label>ルーム名</label>
+            <input type="text" id="room-name" placeholder="例：Aチーム">
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>参加人数</label>
+            <input type="number" id="member-count" value="3" min="1" max="20">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>診断コース（質問数）</label>
+          <select id="question-count-select" class="custom-select">
+            <option value="3">⚡ サクッと診断（3問）</option>
+            <option value="5" selected>⚖️ バランス診断（5問）</option>
+            <option value="10">🔍 じっくり診断（10問）</option>
+          </select>
+        </div>
+        <button class="btn-primary" onclick="createRoom()">ルームを作成する</button>
+      </div>
+
+      <!-- 参加者用カード -->
+      <div class="room-card guest-card">
+        <h3>📱 参加者の方</h3>
+        <div class="form-group">
+          <label>ルームID（4桁）</label>
+          <input type="text" id="join-room-id" placeholder="例：A1B2" maxlength="4" style="text-transform: uppercase; text-align: center; font-weight: bold; letter-spacing: 3px;">
+        </div>
+        <button class="btn-teal" onclick="joinRoom()">ルームに参加する</button>
+      </div>
+    </section>
+
+    <!-- 画面2：待機画面 -->
+    <section id="screen-wait" class="screen">
+      <p class="step-badge" id="wait-room-name">ルーム待機中</p>
+      <h2>メンバーの回答を<br>待っています...</h2>
+      
+      <div class="room-id-box">
+        <p class="room-id-label">ルームID（メンバーに共有してね）</p>
+        <div class="room-id-tag" id="display-room-id">----</div>
+      </div>
+
+      <p class="wait-desc">全員の回答が集まると、自動的に<br>おすすめのゲームが提案されます！</p>
+      
+      <div class="counter-box">
+        <p id="counter-text">0人 / 3人 が回答完了</p>
+      </div>
+
+      <!-- ホスト（または未回答者）が自分の回答を入力するためのボタン -->
+      <div id="wait-action-area" style="width: 100%; margin-top: 16px;">
+        <button id="btn-go-quiz" class="btn-primary" onclick="goToQuizFromWait()">✍️ 自分の回答を入力する</button>
+        <p id="already-submitted-msg" class="submitted-msg" style="display: none;">✅ あなたの回答は送信済みです！<br>他のメンバーの完了をお待ちください。</p>
+      </div>
+
+      <button class="btn-back-link" style="margin-top: auto;" onclick="resetApp()">← 最初に戻る</button>
+    </section>
+
+    <!-- 画面3：事前質問画面（1問ずつ回答） -->
+    <section id="screen-quiz" class="screen">
+      <p class="step-badge" id="quiz-progress">質問 1 / 5</p>
+      <div class="progress-bar-bg">
+        <div id="progress-bar-fill" class="progress-bar-fill"></div>
+      </div>
+
+      <h2 id="quiz-question">ここに質問文が入ります</h2>
+      <p class="note">※あなた自身の感覚で一番近いものを選んでね</p>
+      <div class="choice-list">
+        <button class="btn-choice" onclick="answerQuiz(1)">YES（とても当てはまる）</button>
+        <button class="btn-choice" onclick="answerQuiz(2)">どちらかというと YES</button>
+        <button class="btn-choice" onclick="answerQuiz(3)">どちらかというと NO</button>
+        <button class="btn-choice" onclick="answerQuiz(4)">NO（当てはまらない）</button>
+      </div>
+    </section>
+
+    <!-- 画面4：ゲーム提案画面 -->
+    <section id="screen-games" class="screen">
+      <p class="step-badge">集計完了！グループにおすすめの目的</p>
+      <h2 id="recommended-purpose">① メンバーについて知りたい</h2>
+      <p class="sub-text">おすすめのゲームを1つ選んで遊ぼう！</p>
+      <div id="game-cards-container" class="card-list">
+        <!-- JavaScriptでここにゲームカードが自動生成されます -->
+      </div>
+      <button class="btn-secondary" onclick="renderSuggestedGames()">🔄 別のゲーム候補を見る</button>
+    </section>
+
+    <!-- 画面5：ゲームプレイ画面 -->
+    <section id="screen-play" class="screen">
+      <p class="step-badge">ゲームスタート！</p>
+      
+      <!-- 1. ゲームタイトル -->
+      <h2 id="play-game-title" class="play-title">ゲーム名</h2>
+
+      <!-- 2. イメージ画像 -->
+      <div class="play-illust-area">
+        <img id="play-game-illust" src="" alt="ゲームイラスト" class="play-custom-illust"
+             onload="this.style.display='inline-block'; document.getElementById('play-illust-fallback').style.display='none';"
+             onerror="this.style.display='none'; document.getElementById('play-illust-fallback').style.display='inline-block';">
+        <span id="play-illust-fallback" class="play-fallback-text">＼ 📱 スマホを囲んで話そう！ ／</span>
+      </div>
+
+      <!-- 3. ルール説明 -->
+      <div class="rule-box">
+        <p id="play-game-rule">ここにルールの説明が入ります。</p>
+        <button class="btn-voice-mini" onclick="speakRule()">🔊 ルールを音声で聞く</button>
+      </div>
+
+      <!-- 4. ゲームごとの専用お助けツールエリア -->
+      <div id="tool-container" class="tool-box"></div>
+
+      <!-- 5. 全ゲーム共通のカスタムタイマー -->
+      <div class="timer-box">
+        <div class="timer-top">
+          <span class="timer-label">⏱️ タイマー設定</span>
+          <div class="timer-adjust">
+            <button class="btn-time-adj" onclick="adjustTimer(-60)">－1分</button>
+            <span id="timer-display" class="timer-num">01:00</span>
+            <button class="btn-time-adj" onclick="adjustTimer(60)">＋1分</button>
+          </div>
+        </div>
+        <div class="timer-controls">
+          <button class="btn-timer-start" onclick="startTimer()">▶ スタート</button>
+          <button class="btn-timer-stop" onclick="stopTimer()">⏸ 停止</button>
+          <button class="btn-timer-reset" onclick="resetTimer()">🔄 リセット</button>
+        </div>
+      </div>
+
+      <!-- 6. 画面下部のゲーム終了ボタンエリア -->
+      <div class="play-footer">
+        <button class="btn-primary" onclick="finishGame()">🎉 ゲーム終了！診断結果を見る</button>
+        <button class="btn-back-link" onclick="showScreen('screen-games')">← 別のゲームを選び直す</button>
+      </div>
+    </section>
+
+    <!-- 画面6：アイスブレイク後のMBTI風診断結果画面 -->
+    <section id="screen-result" class="screen">
+      <p class="step-badge">お疲れ様でした！グループの診断結果</p>
+      <div class="result-card">
+        <span class="result-ribbon">DIAGNOSIS RESULT</span>
+        <p class="mbti-code" id="result-code">FQP型</p>
+        <h2 id="result-name">💎 まだ見ぬ原石たちの集い</h2>
+        <div class="result-detail">
+          <h4>【グループの特徴】</h4>
+          <p id="result-feature">特徴テキスト</p>
+          <h4>【本題に向けたアドバイス】</h4>
+          <p id="result-advice">アドバイステキスト</p>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="resetApp()">本題のグループワークへ進む！</button>
+    </section>
+
+  </div>
+  <!-- Firebaseモジュールを使用するため type="module" を指定 -->
+  <script type="module" src="script.js"></script>
+</body>
+</html>
