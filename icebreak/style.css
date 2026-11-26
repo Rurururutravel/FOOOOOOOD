@@ -1,11 +1,13 @@
 :root {
-    --primary-color: #6366f1;
-    --primary-hover: #4f46e5;
-    --bg-color: #f8fafc;
-    --card-bg: #ffffff;
-    --text-color: #1e293b;
-    --gray-color: #64748b;
-    --border-color: #e2e8f0;
+    --primary-color: #4298B4;      /* MBTI風のシアンブルー */
+    --primary-hover: #357E96;
+    --yes-color: #33A474;          /* YES側のティールグリーン */
+    --no-color: #88619A;           /* NO側のパープル */
+    --bg-color: #F6F6F7;           /* 薄いグレーの背景 */
+    --card-bg: #FFFFFF;
+    --text-color: #333C4E;         /* 青みのあるダークグレー */
+    --gray-color: #6B7280;
+    --border-color: #E5E7EB;
 }
 
 body {
@@ -24,9 +26,9 @@ body {
     width: 100%;
     max-width: 600px;
     background: var(--card-bg);
-    padding: 30px;
+    padding: 32px;
     border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 24px rgba(51, 60, 78, 0.08);
 }
 
 .screen {
@@ -38,8 +40,9 @@ body {
 }
 
 h1, h2 {
-    color: var(--primary-color);
+    color: var(--text-color);
     text-align: center;
+    letter-spacing: 0.03em;
 }
 
 p {
@@ -55,28 +58,35 @@ label {
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
+    color: var(--text-color);
 }
 
 input[type="text"], input[type="number"] {
     width: 100%;
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
     font-size: 16px;
     box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+input[type="text"]:focus, input[type="number"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
 }
 
 button {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
     background-color: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 999px; /* MBTI風の丸みのあるピル型ボタン */
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.1s;
     margin-top: 10px;
 }
 
@@ -84,30 +94,84 @@ button:hover {
     background-color: var(--primary-hover);
 }
 
+button:active {
+    transform: scale(0.98);
+}
+
+/* 質問カード（MBTIのセクション風） */
 .question-card {
-    margin-bottom: 25px;
-    padding: 15px;
-    background: #f1f5f9;
-    border-radius: 8px;
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #FFFFFF;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    text-align: center;
+}
+
+.question-card p {
+    color: var(--text-color);
+    font-size: 15px;
+    margin-top: 0;
 }
 
 .radio-group {
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
-    font-size: 14px;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
 }
 
 .radio-group label {
-    font-weight: normal;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    font-weight: bold;
+    font-size: 12px;
     cursor: pointer;
+    padding: 8px 4px;
+    border-radius: 8px;
+    transition: background 0.2s;
 }
 
+/* 1〜4のラベル文字色（YES側＝緑、NO側＝紫） */
+.radio-group label:nth-child(1) { color: #33A474; }
+.radio-group label:nth-child(2) { color: #5BB58E; }
+.radio-group label:nth-child(3) { color: #9E7EB0; }
+.radio-group label:nth-child(4) { color: #88619A; }
+
+/* ラジオボタン自体を大きく丸くする */
+.radio-group input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid #CBD5E1;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 0;
+}
+
+.radio-group label:nth-child(1) input[type="radio"] { border-color: #33A474; width: 32px; height: 32px; }
+.radio-group label:nth-child(2) input[type="radio"] { border-color: #5BB58E; }
+.radio-group label:nth-child(3) input[type="radio"] { border-color: #9E7EB0; }
+.radio-group label:nth-child(4) input[type="radio"] { border-color: #88619A; width: 32px; height: 32px; }
+
+.radio-group label:nth-child(1) input[type="radio"]:checked { background-color: #33A474; }
+.radio-group label:nth-child(2) input[type="radio"]:checked { background-color: #5BB58E; }
+.radio-group label:nth-child(3) input[type="radio"]:checked { background-color: #9E7EB0; }
+.radio-group label:nth-child(4) input[type="radio"]:checked { background-color: #88619A; }
+
+/* 診断結果ボックス */
 .result-box {
     text-align: center;
-    padding: 20px;
-    background: #eef2ff;
-    border-radius: 12px;
+    padding: 24px;
+    background: #ECF5F8;
+    border: 2px solid #4298B4;
+    border-radius: 16px;
     margin-bottom: 20px;
 }
 
@@ -121,11 +185,12 @@ button:hover {
 .room-id-tag {
     font-size: 32px;
     font-weight: bold;
-    color: var(--primary-color);
+    color: var(--yes-color);
     text-align: center;
-    background: #eef2ff;
-    padding: 10px;
-    border-radius: 8px;
-    letter-spacing: 2px;
+    background: #EBF6F1;
+    border: 2px dashed var(--yes-color);
+    padding: 12px;
+    border-radius: 12px;
+    letter-spacing: 3px;
     margin: 15px 0;
 }
